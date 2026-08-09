@@ -1,0 +1,21 @@
+---
+- name: Run Linux system health checks
+  hosts: web
+  become: true
+  gather_facts: true
+
+  roles:
+    - health_check
+
+- name: Generate fleet health report
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+
+    - name: Generate fleet health report
+      ansible.builtin.template:
+        src: "{{ playbook_dir }}/../roles/health_check/templates/fleet_report.j2"
+        dest: "{{ playbook_dir }}/../reports/production-health-report.txt"
+        mode: '0644'

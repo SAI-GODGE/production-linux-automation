@@ -1,0 +1,45 @@
+---
+- name: Apply Linux baseline configuration
+  hosts: web
+  become: true
+  gather_facts: true
+
+  tasks:
+
+    - name: Set timezone to Asia/Kolkata
+      community.general.timezone:
+        name: Asia/Kolkata
+
+    - name: Install baseline administration packages
+      ansible.builtin.dnf:
+        name:
+          - vim
+          - curl
+          - wget
+          - rsync
+          - lsof
+          - bind-utils
+          - firewalld
+        state: present
+
+    - name: Ensure chronyd is enabled and running
+      ansible.builtin.systemd:
+        name: chronyd
+        enabled: true
+        state: started
+
+    - name: Ensure firewalld is enabled and running
+      ansible.builtin.systemd:
+        name: firewalld
+        enabled: true
+        state: started
+
+    - name: Verify SELinux is enforcing
+      ansible.builtin.command:
+        cmd: getenforce
+      register: selinux_status
+      changed_when: false
+
+    - name: Display SELinux status
+      ansible.builtin.debug:
+        msg: "SELinux status: {{ selinux_status.stdout }}"  

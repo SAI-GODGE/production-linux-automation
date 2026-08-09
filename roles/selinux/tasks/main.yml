@@ -1,0 +1,40 @@
+---
+- name: Install SELinux management utilities
+  ansible.builtin.dnf:
+    name:
+      - policycoreutils
+      - policycoreutils-python-utils
+    state: present
+
+- name: Ensure SELinux is enforcing
+  ansible.posix.selinux:
+    policy: targeted
+    state: enforcing
+
+- name: Create web application directory
+  ansible.builtin.file:
+    path: /srv/webapp
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Configure SELinux context for web content
+  community.general.sefcontext:
+    target: '/srv/webapp(/.*)?'
+    setype: httpd_sys_content_t
+    state: present
+
+- name: Apply SELinux context to web application directory
+  ansible.builtin.command:
+    cmd: restorecon -Rv /srv/webapp
+  changed_when: false
+
+- name: Deploy SELinux test web content
+  ansible.builtin.copy:
+    content: |
+      SELinux Protected Web Content - {{ inventory_hostname }}
+    dest: /srv/webapp/index.html
+    owner: root
+    group: root
+    mode: '0644'

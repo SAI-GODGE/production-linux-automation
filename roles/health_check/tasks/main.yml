@@ -1,0 +1,128 @@
+---
+- name: Determine primary root filesystem
+  ansible.builtin.set_fact:
+    root_mount: "{{ ansible_mounts | selectattr('mount', 'equalto', '/') | first }}"
+
+- name: Calculate root filesystem usage
+  ansible.builtin.set_fact:
+    root_disk_usage: >-
+      {{
+        (
+          100 -
+          (
+            (root_mount.size_available | float /
+            root_mount.size_total | float) * 100
+          )
+        ) | round(1) | float
+      }}
+
+- name: Calculate memory usage
+  ansible.builtin.set_fact:
+    memory_usage: >-
+      {{
+        (
+          (
+            ansible_memory_mb.real.used | float /
+            ansible_memory_mb.real.total | float
+          ) * 100
+        ) | round(1) | float
+      }}
+
+- name: Determine memory health
+  ansible.builtin.set_fact:
+    memory_status: >-
+      {{
+        'CRITICAL' if (memory_usage | float) >= (health_memory_critical | float)
+        else 'WARNING' if (memory_usage | float) >= (health_memory_warning | float)
+        else 'HEALTHY'
+      }}
+
+- name: Determine disk health
+  ansible.builtin.set_fact:
+    disk_status: >-
+      {{
+        'CRITICAL' if (root_disk_usage | float) >= (health_disk_critical | float)
+        else 'WARNING' if (root_disk_usage | float) >= (health_disk_warning | float)
+        else 'HEALTHY'
+      }}
+
+- name: Check SELinux status
+  ansible.builtin.command:
+    cmd: getenforce
+  register: selinux_check
+  changed_when: false
+
+- name: Check firewalld status
+  ansible.builtin.command:
+    cmd: systemctl is-active firewalld
+  register: firewalld_check
+  changed_when: false
+
+- name: Check SSH service
+  ansible.builtin.command:
+    cmd: systemctl is-active sshd
+  register: ssh_check
+  changed_when: false
+
+- name: Check chronyd service
+  ansible.builtin.command:
+    cmd: systemctl is-active chronyd
+  register: chronyd_check
+  changed_when: false
+
+- name: Check HTTP service
+  ansible.builtin.shell:
+    cmd: |
+      if systemctl is-active --quiet nginx; then
+        echo "Nginx"
+      elif systemctl is-active --quiet httpd; then
+        echo "Apache"
+      else
+        echo "NONE"
+      fi
+  register: web_service_check
+  changed_when: false
+
+- name: Check HTTP port
+  ansible.builtin.shell:
+    cmd: "ss -lnt | grep -q ':80 '"
+  register: http_port_check
+  changed_when: false
+  failed_when: false
+
+- name: Calculate overall health
+  ansible.builtin.set_fact:
+    overall_status: >-
+      {{
+        'CRITICAL'
+        if (
+          disk_status == 'CRITICAL'
+          or memory_status == 'CRITICAL'
+          or selinux_check.stdout != 'Enforcing'
+          or firewalld_check.stdout != 'active'
+          or ssh_check.stdout != 'active'
+          or chronyd_check.stdout != 'active'
+          or web_service_check.stdout == 'NONE'
+          or http_port_check.rc != 0
+        )
+        else 'WARNING'
+        if (
+          disk_status == 'WARNING'
+          or memory_status == 'WARNING'
+        )
+        else 'HEALTHY'
+      }}
+
+- name: Generate health report
+  ansible.builtin.template:
+    src: health_report.j2
+    dest: "/tmp/{{ inventory_hostname }}-health-report.txt"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Fetch health report to Ansible control node
+  ansible.builtin.fetch:
+    src: "/tmp/{{ inventory_hostname }}-health-report.txt"
+    dest: "{{ playbook_dir }}/../reports/"
+    flat: true

@@ -1,0 +1,25 @@
+---
+- name: Install Apache
+  ansible.builtin.dnf:
+    name: httpd
+    state: present
+
+- name: Deploy Apache web application configuration
+  ansible.builtin.template:
+    src: webapp.conf.j2
+    dest: /etc/httpd/conf.d/webapp.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Apache
+
+- name: Validate Apache configuration
+  ansible.builtin.command:
+    cmd: /usr/sbin/httpd -t
+  changed_when: false
+
+- name: Ensure Apache is enabled and running
+  ansible.builtin.systemd:
+    name: httpd
+    enabled: true
+    state: started

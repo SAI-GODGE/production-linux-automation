@@ -1,0 +1,34 @@
+---
+- name: Configure Linux firewall baseline
+  hosts: web
+  become: true
+  gather_facts: true
+
+  tasks:
+
+    - name: Ensure firewalld is installed
+      ansible.builtin.dnf:
+        name: firewalld
+        state: present
+
+    - name: Ensure firewalld is enabled and running
+      ansible.builtin.systemd:
+        name: firewalld
+        enabled: true
+        state: started
+
+    - name: Ensure SSH is allowed
+      ansible.posix.firewalld:
+        service: ssh
+        zone: public
+        permanent: true
+        immediate: true
+        state: enabled
+
+    - name: Ensure HTTP is allowed
+      ansible.posix.firewalld:
+        service: http
+        zone: public
+        permanent: true
+        immediate: true
+        state: enabled

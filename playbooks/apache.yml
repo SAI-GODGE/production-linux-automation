@@ -1,0 +1,8 @@
+---
+- name: Deploy Apache web server
+  hosts: apache
+  become: true
+  gather_facts: true
+
+  roles:
+    - apache

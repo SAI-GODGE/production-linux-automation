@@ -1,0 +1,8 @@
+---
+- name: Configure SELinux web content policy
+  hosts: web
+  become: true
+  gather_facts: true
+
+  roles:
+    - selinux

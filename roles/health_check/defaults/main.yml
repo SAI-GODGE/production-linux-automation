@@ -1,0 +1,6 @@
+---
+health_disk_warning: 70
+health_disk_critical: 85
+
+health_memory_warning: 75
+health_memory_critical: 90

@@ -1,0 +1,76 @@
+---
+- name: Harden SSH configuration
+  hosts: web
+  become: true
+  gather_facts: true
+
+  tasks:
+
+    - name: Install OpenSSH server
+      ansible.builtin.dnf:
+        name: openssh-server
+        state: present
+
+    - name: Disable root SSH login
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin no'
+        backup: true
+        validate: '/usr/sbin/sshd -t -f %s'
+
+    - name: Disable password authentication
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+        backup: true
+        validate: '/usr/sbin/sshd -t -f %s'
+
+    - name: Enable public key authentication
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PubkeyAuthentication'
+        line: 'PubkeyAuthentication yes'
+        backup: true
+        validate: '/usr/sbin/sshd -t -f %s'
+
+    - name: Configure SSH authentication attempts
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?MaxAuthTries'
+        line: 'MaxAuthTries 4'
+        backup: true
+        validate: '/usr/sbin/sshd -t -f %s'
+
+    - name: Configure SSH idle timeout
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?ClientAliveInterval'
+        line: 'ClientAliveInterval 300'
+        backup: true
+        validate: '/usr/sbin/sshd -t -f %s'
+
+    - name: Configure SSH idle timeout count
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?ClientAliveCountMax'
+        line: 'ClientAliveCountMax 2'
+        backup: true
+        validate: '/usr/sbin/sshd -t -f %s'
+
+    - name: Validate SSH configuration
+      ansible.builtin.command:
+        cmd: sshd -t
+      changed_when: false
+
+    - name: Ensure SSH service is enabled and running
+      ansible.builtin.systemd:
+        name: sshd
+        enabled: true
+        state: started
+
+    - name: Restart SSH service
+      ansible.builtin.systemd:
+        name: sshd
+        state: restarted

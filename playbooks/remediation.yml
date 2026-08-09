@@ -1,0 +1,8 @@
+---
+- name: Remediate unhealthy web services
+  hosts: web
+  become: true
+  gather_facts: false
+
+  roles:
+    - remediation

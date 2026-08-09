@@ -1,0 +1,60 @@
+---
+- name: Determine web service
+  ansible.builtin.shell:
+    cmd: |
+      if systemctl list-unit-files nginx.service >/dev/null 2>&1; then
+        echo "nginx"
+      elif systemctl list-unit-files httpd.service >/dev/null 2>&1; then
+        echo "httpd"
+      else
+        echo "none"
+      fi
+  register: detected_web_service
+  changed_when: false
+
+- name: Check current web service state
+  ansible.builtin.command:
+    cmd: "systemctl is-active {{ detected_web_service.stdout }}"
+  register: current_web_state
+  changed_when: false
+  failed_when: false
+  when: detected_web_service.stdout != "none"
+
+- name: Restart Nginx when unhealthy
+  ansible.builtin.systemd:
+    name: nginx
+    state: restarted
+  when:
+    - detected_web_service.stdout == "nginx"
+    - current_web_state.stdout != "active"
+
+- name: Restart Apache when unhealthy
+  ansible.builtin.systemd:
+    name: httpd
+    state: restarted
+  when:
+    - detected_web_service.stdout == "httpd"
+    - current_web_state.stdout != "active"
+
+- name: Verify web service after remediation
+  ansible.builtin.command:
+    cmd: "systemctl is-active {{ detected_web_service.stdout }}"
+  register: remediation_service_check
+  changed_when: false
+  when: detected_web_service.stdout != "none"
+
+- name: Verify HTTP after remediation
+  ansible.builtin.uri:
+    url: http://localhost/
+    status_code: 200
+    return_content: false
+  register: remediation_http_check
+  when: detected_web_service.stdout != "none"
+
+- name: Display remediation result
+  ansible.builtin.debug:
+    msg:
+      - "Host: {{ inventory_hostname }}"
+      - "Web service: {{ detected_web_service.stdout }}"
+      - "Service status: {{ remediation_service_check.stdout | default('unknown') }}"
+      - "HTTP status: {{ remediation_http_check.status | default('unknown') }}"

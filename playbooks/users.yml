@@ -1,0 +1,49 @@
+---
+- name: Manage Linux users and groups
+  hosts: web
+  become: true
+  gather_facts: true
+
+  tasks:
+
+    - name: Create linuxadmins group
+      ansible.builtin.group:
+        name: linuxadmins
+        state: present
+
+    - name: Create support group
+      ansible.builtin.group:
+        name: support
+        state: present
+
+    - name: Create opsadmin user
+      ansible.builtin.user:
+        name: opsadmin
+        comment: "Linux Operations Administrator"
+        group: linuxadmins
+        groups: wheel
+        append: true
+        shell: /bin/bash
+        create_home: true
+        password_lock: true
+        state: present
+
+    - name: Create supportuser user
+      ansible.builtin.user:
+        name: supportuser
+        comment: "Linux Support User"
+        group: support
+        shell: /bin/bash
+        create_home: true
+        password_lock: true
+        state: present
+
+    - name: Create sudoers configuration for linuxadmins
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/linuxadmins
+        content: |
+          %linuxadmins ALL=(ALL) ALL
+        owner: root
+        group: root
+        mode: '0440'
+        validate: '/usr/sbin/visudo -cf %s'

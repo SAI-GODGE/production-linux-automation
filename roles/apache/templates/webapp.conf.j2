@@ -1,0 +1,15 @@
+<VirtualHost *:80>
+
+    ServerName _
+
+    DocumentRoot /srv/webapp
+
+    <Directory /srv/webapp>
+        AllowOverride None
+        Require all granted
+    </Directory>
+
+    ErrorLog /var/log/httpd/webapp_error.log
+    CustomLog /var/log/httpd/webapp_access.log combined
+
+</VirtualHost>
