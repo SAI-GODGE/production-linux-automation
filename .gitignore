@@ -30,3 +30,6 @@ reports/*.txt
 # Python cache
 __pycache__/
 *.pyc
+# Keep generated reports ignored except the final project report
+!reports/
+!reports/production-health-report.txt
