@@ -1,0 +1,22 @@
+# SSH private keys
+*.pem
+*.key
+id_ed25519
+id_rsa
+
+# Ansible
+*.retry
+
+# Generated reports
+reports/*
+
+# Python
+__pycache__/
+*.pyc
+
+# Environment/secrets
+.env
+
+# OS/editor files
+.DS_Store
+*.swp
