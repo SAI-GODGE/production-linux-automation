@@ -428,6 +428,8 @@ ansible web01 -b -m shell -a 'fallocate -l 12G /tmp/disk-pressure-test.img'
 ```
 The test increased the root filesystem utilization and created a realistic warning condition for the health-monitoring system.
 
+![Disk Pressure Simulation](docs/screenshots/11-disk-pressure-simulation.png)
+
 ### Warning Detection
 
 The health-check playbook was executed after introducing the disk-pressure condition:
@@ -435,6 +437,8 @@ The health-check playbook was executed after introducing the disk-pressure condi
 ansible-playbook playbooks/health_check.yml
 ```
 The previously implemented health-monitoring system detected the increased disk utilization and changed the status of web01 from HEALTHY to WARNING.
+
+![Disk Pressure Warning](docs/screenshots/10-fleet-health-warning.png)
 
 This confirmed that the monitoring logic was able to identify the simulated resource-pressure condition.
 
@@ -445,6 +449,8 @@ After the test was completed, the temporary disk-pressure file was removed from 
 The filesystem was checked again and the health-check playbook was executed to verify that the server had returned to its normal state.
 
 The final health report showed that web01 had returned to a healthy disk status and the overall server status was restored to HEALTHY.
+
+![Fleet Health Report](docs/screenshots/09-fleet-health-report.png)
 
 This test demonstrates the complete incident lifecycle:
 ```text
@@ -460,4 +466,4 @@ Health Check Re-run
      ↓
 Server Returns to HEALTHY
 ```
-![Fleet Health Report](docs/screenshots/09-fleet-health-report.png)
+
