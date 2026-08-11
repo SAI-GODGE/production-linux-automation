@@ -66,4 +66,70 @@ Overall, this project helped me practice Linux administration, Ansible automatio
 | Monitoring & Health Checks | Ansible-based health checks and fleet health reports |
 | Version Control | Git, GitHub |
 
+## Infrastructure Setup
 
+The infrastructure for this project was created on AWS using a custom VPC, a public subnet, an Internet Gateway, and a dedicated route table. This network provides the environment in which the Ansible control node and RHEL servers are deployed and managed.
+
+### AWS VPC
+
+A custom VPC named `production-linux-vpc` was created in the AWS Mumbai (`ap-south-1`) region.
+
+The VPC uses the IPv4 CIDR block `10.0.0.0/16`, providing a private address space for the project infrastructure.
+
+**Configuration:**
+
+- VPC Name: `production-linux-vpc`
+- IPv4 CIDR: `10.0.0.0/16`
+- Region: `ap-south-1` (Mumbai)
+- Tenancy: Default
+- DNS Resolution: Enabled
+
+![AWS VPC Configuration](docs/screenshots/01-vpc-configuration.png)
+
+
+### Public Subnet
+
+A public subnet named `production-public-subnet` was created inside the production VPC.
+
+The subnet uses the CIDR block `10.0.1.0/24` and is located in Availability Zone `ap-south-1a`.
+
+**Configuration:**
+
+- Subnet Name: `production-public-subnet`
+- IPv4 CIDR: `10.0.1.0/24`
+- Availability Zone: `ap-south-1a`
+- VPC: `production-linux-vpc`
+
+![Public Subnet Configuration](docs/screenshots/02-public-subnet.png)
+
+### Internet Gateway
+
+An Internet Gateway named `production-igw` was created and attached to the `production-linux-vpc`.
+
+The Internet Gateway provides a path between the VPC and the internet for resources that have the appropriate routing and public network configuration.
+
+**Configuration:**
+
+- Internet Gateway: `production-igw`
+- Status: Attached
+- VPC: `production-linux-vpc`
+
+![Internet Gateway](docs/screenshots/03-internet-gateway-attached.png)
+
+
+### Route Table
+
+A dedicated route table named `production-public-rt` was created for the public subnet.
+
+The route table contains the default local VPC route and an internet route through the Internet Gateway.
+
+**Routes:**
+
+| Destination | Target |
+|---|---|
+| `10.0.0.0/16` | `local` |
+| `0.0.0.0/0` | `production-igw` |
+
+The `production-public-subnet` was explicitly associated with this route table, allowing resources in the subnet to use the configured routes.
+
+![Public Route Table](docs/screenshots/04-public-route-table.png)
