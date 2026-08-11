@@ -135,7 +135,6 @@ The `production-public-subnet` was explicitly associated with this route table, 
 
 ![Public Route Table](docs/screenshots/04-public-route-table.png)
 
-
 ## Ansible Configuration
 
 Ansible is used as the central automation and configuration management tool for the Linux server fleet. The `ansible-control` node manages the three RHEL servers — `web01`, `web02`, and `web03` — through SSH.
