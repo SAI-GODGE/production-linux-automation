@@ -10,6 +10,7 @@ The main idea is to manage multiple Linux servers from a single Ansible control 
 I also built health checks to monitor important system resources and services, generate fleet health reports, and identify issues such as high disk usage. To make the project more realistic, I simulated problems such as disk pressure, SELinux access denials, and Apache configuration errors, then investigated and recovered from them.
 
 Overall, this project helped me practice Linux administration, Ansible automation, security, troubleshooting, monitoring, and Git-based configuration management in a production-style environment.
+
 ---
 
 ## Architecture
