@@ -49,6 +49,7 @@ Overall, this project helped me practice Linux administration, Ansible automatio
 ```
 ![Production Linux Server Management Architecture](docs/screenshots/architecture.png)
 
+```text
 ## Tech Stack
 
 | Category | Technologies |
@@ -65,7 +66,7 @@ Overall, this project helped me practice Linux administration, Ansible automatio
 | Networking | VPC, Subnet, Internet Gateway, Route Table |
 | Monitoring & Health Checks | Ansible-based health checks and fleet health reports |
 | Version Control | Git, GitHub |
-
+```
 ## Infrastructure Setup
 
 The infrastructure for this project was created on AWS using a custom VPC, a public subnet, an Internet Gateway, and a dedicated route table. This network provides the environment in which the Ansible control node and RHEL servers are deployed and managed.
