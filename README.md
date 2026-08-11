@@ -400,3 +400,64 @@ Overall Status : WARNING
 The disk-pressure test was later cleaned up and the filesystem returned to its normal usage level.
 
 This demonstrates a simple operational workflow for detecting abnormal disk utilization before it becomes a critical storage problem.
+
+## Failure Simulation & Recovery
+
+After implementing the automated health-monitoring system, a controlled failure scenario was introduced to test how the monitoring system behaves when a server experiences abnormal disk utilization.
+
+This test was performed on `web01` and followed a simple operational workflow:
+
+```text
+Normal State
+     ↓
+Introduce Controlled Failure
+     ↓
+Detect the Problem
+     ↓
+Investigate
+     ↓
+Recover the Server
+     ↓
+Validate Healthy State
+```
+### Disk Pressure Simulation
+
+A temporary disk-pressure condition was intentionally created on web01 using a 12 GB test file.
+```text
+ansible web01 -b -m shell -a 'fallocate -l 12G /tmp/disk-pressure-test.img'
+```
+The test increased the root filesystem utilization and created a realistic warning condition for the health-monitoring system.
+
+### Warning Detection
+
+The health-check playbook was executed after introducing the disk-pressure condition:
+```text
+ansible-playbook playbooks/health_check.yml
+```
+The previously implemented health-monitoring system detected the increased disk utilization and changed the status of web01 from HEALTHY to WARNING.
+
+This confirmed that the monitoring logic was able to identify the simulated resource-pressure condition.
+
+### Recovery Validation
+
+After the test was completed, the temporary disk-pressure file was removed from web01.
+
+The filesystem was checked again and the health-check playbook was executed to verify that the server had returned to its normal state.
+
+The final health report showed that web01 had returned to a healthy disk status and the overall server status was restored to HEALTHY.
+
+This test demonstrates the complete incident lifecycle:
+```text
+Disk Pressure
+     ↓
+Health Check Detects WARNING
+     ↓
+Problem Investigated
+     ↓
+Temporary Test Data Removed
+     ↓
+Health Check Re-run
+     ↓
+Server Returns to HEALTHY
+```
+![Fleet Health Report](docs/screenshots/09-fleet-health-report.png)
