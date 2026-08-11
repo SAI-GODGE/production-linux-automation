@@ -45,7 +45,7 @@ Overall, this project helped me practice Linux administration, Ansible automatio
        ├─ Firewall       ├─ Firewall      ├─ HTTP
        └─ Time sync      └─ Validation    └─ Fleet report
 
-...
+```
 
 ## Architecture
 
