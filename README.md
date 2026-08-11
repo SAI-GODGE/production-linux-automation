@@ -159,3 +159,21 @@ Before performing configuration and administration tasks, connectivity between t
 ansible all -m ping
 ```
 ![Connectivity Validation](docs/screenshots/05-ansible-fleet-connectivity.png)
+
+## Linux Baseline Configuration
+
+A common Linux baseline was applied across the managed RHEL 9 servers using Ansible. The purpose of the baseline is to keep the servers consistent and ensure that important administration and security settings are configured in a repeatable way.
+
+The baseline configuration includes:
+
+- System timezone configuration
+- Installation of required administration packages
+- `chronyd` time synchronization
+- `firewalld` configuration
+- SELinux validation
+- Standard system configuration
+
+The baseline was applied using:
+
+```bash
+ansible-playbook playbooks/baseline.yml
