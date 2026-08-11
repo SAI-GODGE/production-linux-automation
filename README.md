@@ -328,3 +328,65 @@ ansible web -b -m command -a 'firewall-cmd --list-services'
 ![Firewall](docs/screenshots/08-firewall-validation.png)
 
 The firewall status was also checked as part of the automated health-check process.
+
+## Automated Health Monitoring
+
+An automated health-check system was implemented using Ansible to monitor the overall condition of the managed RHEL servers.
+
+The health-check role collects and evaluates important system information including:
+
+- Memory utilization
+- Root filesystem utilization
+- SELinux status
+- Firewall status
+- SSH service status
+- Chronyd service status
+- Web service status
+- HTTP port 80 availability
+- Overall server health
+
+The health checks are executed using:
+
+```bash
+ansible-playbook playbooks/health_check.yml
+```
+The results are generated for each managed server and then combined into a fleet-level health report.
+
+### Fleet Health Report
+
+A consolidated report is generated on the Ansible control node:
+```text
+reports/production-health-report.txt
+```
+The report provides a quick overview of the entire Linux fleet, including resource usage, security status, services, HTTP availability, and overall health.
+
+![Fleet Health Report](docs/screenshots/09-fleet-health-report.png)
+
+The service and network checks also report the state of SSH, chronyd, the web service, and HTTP port 80.
+
+### Disk Monitoring
+
+The health-check system monitors the usage of the root filesystem and classifies the result based on configured thresholds.
+
+A normal server state was first verified using:
+```text
+ansible web01 -b -m shell -a 'df -h /'
+```
+To test the monitoring logic, controlled disk pressure was simulated on web01 by creating a temporary 12 GB file:
+```text
+ansible web01 -b -m shell -a 'fallocate -l 12G /tmp/disk-pressure-test.img'
+```
+The root filesystem usage increased from approximately 13% to approximately 77%.
+
+The health-check playbook was then executed again:
+```text
+ansible-playbook playbooks/health_check.yml
+```
+The generated report detected the increased disk usage and marked web01 as:
+```text
+Disk Status    : WARNING
+Overall Status : WARNING
+```
+The disk-pressure test was later cleaned up and the filesystem returned to its normal usage level.
+
+This demonstrates a simple operational workflow for detecting abnormal disk utilization before it becomes a critical storage problem.
