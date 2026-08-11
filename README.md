@@ -177,3 +177,42 @@ The baseline configuration is implemented in `playbooks/baseline.yml` and can be
 
 ```bash
 ansible-playbook playbooks/baseline.yml
+```
+
+## Web Server Deployment
+
+The project uses Ansible to deploy and manage web servers across the Linux fleet. Two different web servers were deployed to demonstrate how the same automation approach can manage different services on different hosts.
+
+| Server | Host | Purpose |
+|---|---|---|
+| Nginx | `web01` | Web server |
+| Nginx | `web02` | Web server |
+| Apache HTTP Server | `web03` | Web server |
+
+### Nginx
+
+Nginx was deployed on `web01` and `web02` using an Ansible role.
+
+The Nginx role manages:
+
+- Nginx installation
+- Nginx configuration
+- Web application content
+- Service state
+- Configuration changes
+- Service restart through Ansible handlers
+
+The deployed web page contains the server hostname and indicates that the server is managed by Ansible.
+
+#### web01
+
+![Nginx Web Server - web01](docs/screenshots/16-web01-nginx.png)
+
+#### web02
+
+![Nginx Web Server - web02](docs/screenshots/17-web02-nginx.png)
+
+The Nginx deployment was validated from the Ansible control node using an HTTP request:
+
+```bash
+ansible nginx -b -m shell -a 'curl -s http://localhost/'
