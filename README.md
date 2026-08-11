@@ -466,4 +466,112 @@ Health Check Re-run
      ↓
 Server Returns to HEALTHY
 ```
+## Project Structure
 
+The project is organized into separate directories for Ansible configuration, inventory, playbooks, reusable roles, documentation, and screenshots.
+
+```text
+production-linux-automation/
+│
+├── ansible.cfg
+├── .gitignore
+├── README.md
+│
+├── inventory/
+│   └── hosts.ini
+│
+├── playbooks/
+│   ├── apache.yml
+│   ├── baseline.yml
+│   ├── firewall.yml
+│   ├── health_check.yml
+│   ├── hostname.yml
+│   ├── remediation.yml
+│   ├── selinux.yml
+│   ├── ssh_hardening.yml
+│   ├── users.yml
+│   └── web_servers.yml
+│
+├── roles/
+│   │
+│   ├── apache/
+│   │   ├── handlers/
+│   │   │   └── main.yml
+│   │   ├── tasks/
+│   │   │   └── main.yml
+│   │   └── templates/
+│   │       ├── index.html.j2
+│   │       └── webapp.conf.j2
+│   │
+│   ├── health_check/
+│   │   ├── defaults/
+│   │   │   └── main.yml
+│   │   ├── tasks/
+│   │   │   └── main.yml
+│   │   └── templates/
+│   │       ├── fleet_report.j2
+│   │       └── health_report.j2
+│   │
+│   ├── hostname/
+│   │   └── tasks/
+│   │       └── main.yml
+│   │
+│   ├── nginx/
+│   │   ├── handlers/
+│   │   │   └── main.yml
+│   │   ├── tasks/
+│   │   │   └── main.yml
+│   │   └── templates/
+│   │       ├── index.html.j2
+│   │       └── nginx.conf.j2
+│   │
+│   ├── remediation/
+│   │   └── tasks/
+│   │       └── main.yml
+│   │
+│   └── selinux/
+│       └── tasks/
+│           └── main.yml
+│
+└── docs/
+    │
+    ├── project-documentation.pdf
+    │
+    └── screenshots/
+        ├── 01-vpc-configuration.png
+        ├── 02-public-subnet.png
+        ├── 03-internet-gateway-attached.png
+        ├── 04-public-route-table.png
+        ├── 05-ansible-fleet-connectivity.png
+        ├── 06-selinux-enforcing.png
+        ├── 07-ssh-hardening-validation.png
+        ├── 08-firewall-validation.png
+        ├── 09-fleet-health-report.png
+        ├── 10-fleet-health-warning.png
+        ├── 11-disk-pressure-simulation.png
+        ├── 12-disk-pressure-recovery.png
+        ├── 13-selinux-denial.png
+        ├── 14-selinux-context-fix.png
+        ├── 15-selinux-recovery.png
+        ├── 16-web01-nginx.png
+        ├── 17-web02-nginx.png
+        └── 18-web03-apache.png
+```
+## Project Validation
+
+The project was tested across the three managed RHEL servers to verify Ansible connectivity, security configuration, web-service availability, health monitoring, failure detection, troubleshooting, and recovery.
+
+The final validation confirmed:
+
+- Ansible connectivity to all managed nodes
+- SELinux in Enforcing mode
+- Firewall active
+- SSH service active
+- Chronyd service active
+- Nginx running on `web01` and `web02`
+- Apache running on `web03`
+- HTTP port 80 responding successfully
+- Fleet health report generated successfully
+- Disk-pressure warning detected and recovered
+- SELinux access-control issue successfully diagnosed and corrected
+- Apache configuration issue successfully identified and resolved
