@@ -372,6 +372,10 @@ A normal server state was first verified using:
 ```text
 ansible web01 -b -m shell -a 'df -h /'
 ```
+
+![Disk Before Creating Pressure](docs/screenshots/12-disk-pressure-recovery.png)
+
+
 To test the monitoring logic, controlled disk pressure was simulated on web01 by creating a temporary 12 GB file:
 ```text
 ansible web01 -b -m shell -a 'fallocate -l 12G /tmp/disk-pressure-test.img'
@@ -386,6 +390,8 @@ The health-check playbook was then executed again:
 ```text
 ansible-playbook playbooks/health_check.yml
 ```
+
+![Disk Pressure Warning](docs/screenshots/10-fleet-health-warning.png)
 The generated report detected the increased disk usage and marked web01 as:
 ```text
 Disk Status    : WARNING
