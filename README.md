@@ -216,3 +216,22 @@ The Nginx deployment was validated from the Ansible control node using an HTTP r
 
 ```bash
 ansible nginx -b -m shell -a 'curl -s http://localhost/'
+```
+
+### Apache
+
+Apache HTTP Server was deployed on `web03` using a dedicated Ansible role.
+
+The Apache role manages:
+
+- Apache installation
+- Apache configuration
+- Web application content
+- Service state
+- Configuration validation
+- Service restart through an Ansible handler
+
+The Apache configuration was validated using:
+
+```bash
+ansible web03 -b -m command -a 'httpd -t'
