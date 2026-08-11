@@ -376,6 +376,10 @@ To test the monitoring logic, controlled disk pressure was simulated on web01 by
 ```text
 ansible web01 -b -m shell -a 'fallocate -l 12G /tmp/disk-pressure-test.img'
 ```
+
+![Disk Pressure Simulation](docs/screenshots/11-disk-pressure-simulation.png)
+
+
 The root filesystem usage increased from approximately 13% to approximately 77%.
 
 The health-check playbook was then executed again:
