@@ -134,3 +134,26 @@ The route table contains the default local VPC route and an internet route throu
 The `production-public-subnet` was explicitly associated with this route table, allowing resources in the subnet to use the configured routes.
 
 ![Public Route Table](docs/screenshots/04-public-route-table.png)
+
+## Ansible Configuration
+
+Ansible is used as the central automation and configuration management tool for the Linux server fleet. The `ansible-control` node manages the three RHEL servers — `web01`, `web02`, and `web03` — through SSH.
+
+### Inventory
+
+The Ansible inventory defines the managed Linux servers and allows them to be addressed as a group.
+
+The project uses the following hosts:
+
+- `web01`
+- `web02`
+- `web03`
+
+The control node uses this inventory to execute Ansible commands and automation tasks across the server fleet.
+
+### Connectivity Validation
+
+Before performing configuration and administration tasks, connectivity between the Ansible control node and all managed servers was validated using the Ansible `ping` module.
+
+```bash
+ansible all -m ping
