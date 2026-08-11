@@ -173,7 +173,7 @@ The baseline configuration includes:
 - SELinux validation
 - Standard system configuration
 
-The baseline was applied using:
+The baseline configuration is implemented in `playbooks/baseline.yml` and can be executed using:
 
 ```bash
 ansible-playbook playbooks/baseline.yml
