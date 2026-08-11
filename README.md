@@ -50,5 +50,6 @@ Overall, this project helped me practice Linux administration, Ansible automatio
 
 The following diagram shows the architecture implemented in this project, including the AWS VPC, public subnet, Ansible control node, RHEL worker nodes, web servers, and the main automation and security activities.
 
-![Production Linux Server Management Architecture](docs/screenshots/architecture.png)
+![Production Linux Server Management Architecture](docs/screenshots/<img width="1238" height="195" alt="image" src="https://github.com/user-attachments/assets/d836f0fc-933a-4051-b3a9-e2176939ec2e" />
+)
 
