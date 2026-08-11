@@ -235,3 +235,17 @@ The Apache configuration was validated using:
 
 ```bash
 ansible web03 -b -m command -a 'httpd -t'
+```
+The configuration returned:
+
+```text
+Syntax OK
+```
+The Apache service was then verified using:
+```text
+ansible web03 -b -m command -a 'systemctl is-active httpd'
+```
+The service returned:
+```text
+active
+```
