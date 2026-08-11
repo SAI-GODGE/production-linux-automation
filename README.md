@@ -258,3 +258,63 @@ The application successfully returned the Apache web page displaying the hostnam
 #### web03
 
 ![Apache Web Server - web03](docs/screenshots/18-web03-apache.png)
+
+## Security Hardening
+
+Security hardening was applied across the managed RHEL 9 servers using Ansible. The project focuses on three important areas of Linux server security: SELinux, SSH, and the host-based firewall.
+
+### SELinux
+
+SELinux was kept enabled in **Enforcing** mode across the managed servers.
+
+The status was verified using:
+
+```bash
+ansible all -b -m command -a 'getenforce'
+```
+
+![SELinux](docs/screenshots/06-selinux-enforcing.png)
+
+The managed servers returned:
+```text
+Enforcing
+```
+The project also configured the correct SELinux context for web content under /srv/webapp.
+The web content uses the SELinux type:
+```text
+httpd_sys_content_t  
+```
+This allows the web servers to access the application content while SELinux continues to enforce access-control policies.
+
+### SSH Hardening
+
+SSH was hardened using Ansible to reduce unnecessary remote-access risks.
+The configuration was validated for settings including:
+```text
+PermitRootLogin no
+PasswordAuthentication no
+PubkeyAuthentication yes
+MaxAuthTries 4
+ClientAliveInterval 300
+ClientAliveCountMax 2
+```
+The configuration was checked using:
+```text
+ansible web -b -m shell -a 'sshd -T | grep -E "^(permitrootlogin|passwordauthentication|pubkeyauthentication|maxauthtries|clientaliveinterval|clientalivecountmax)"'
+```
+
+![SSH Hardening](docs/screenshots/07-ssh-hardening-validation.png)
+
+This configuration uses SSH key-based authentication, prevents direct root login, disables password-based SSH authentication, limits authentication attempts, and configures SSH session keepalive settings.
+
+### Firewall
+
+firewalld was configured and validated on the managed RHEL servers.
+The firewall configuration was managed through Ansible and verified to be active.
+The project allows the services required for administration and web-server operation, including SSH and HTTP.
+```text
+ansible web -b -m command -a 'firewall-cmd --list-services'
+```
+![Firewall](docs/screenshots/08-firewall-validation.png)
+
+The firewall status was also checked as part of the automated health-check process.
