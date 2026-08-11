@@ -49,4 +49,22 @@ Overall, this project helped me practice Linux administration, Ansible automatio
 ```
 ![Production Linux Server Management Architecture](docs/screenshots/architecture.png)
 
+## Tech Stack
+
+| Category | Technologies |
+|---|---|
+| Cloud Platform | AWS |
+| Compute | Amazon EC2 |
+| Operating System | Red Hat Enterprise Linux (RHEL) 9 |
+| Automation & Configuration Management | Ansible |
+| Remote Management | SSH |
+| Web Servers | Nginx, Apache HTTP Server |
+| Security | SELinux, firewalld, SSH hardening |
+| Time Synchronization | chrony |
+| Scripting & Administration | Bash / Linux Shell |
+| Networking | VPC, Subnet, Internet Gateway, Route Table |
+| Monitoring & Health Checks | Ansible-based health checks and fleet health reports |
+| Version Control | Git, GitHub |
+| Documentation | Markdown |
+
 
