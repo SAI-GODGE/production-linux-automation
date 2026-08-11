@@ -279,16 +279,21 @@ The managed servers returned:
 Enforcing
 ```
 The project also configured the correct SELinux context for web content under /srv/webapp.
+
 The web content uses the SELinux type:
+
 ```text
 httpd_sys_content_t  
 ```
+
 This allows the web servers to access the application content while SELinux continues to enforce access-control policies.
 
 ### SSH Hardening
 
 SSH was hardened using Ansible to reduce unnecessary remote-access risks.
+
 The configuration was validated for settings including:
+
 ```text
 PermitRootLogin no
 PasswordAuthentication no
@@ -297,7 +302,9 @@ MaxAuthTries 4
 ClientAliveInterval 300
 ClientAliveCountMax 2
 ```
+
 The configuration was checked using:
+
 ```text
 ansible web -b -m shell -a 'sshd -T | grep -E "^(permitrootlogin|passwordauthentication|pubkeyauthentication|maxauthtries|clientaliveinterval|clientalivecountmax)"'
 ```
@@ -309,11 +316,15 @@ This configuration uses SSH key-based authentication, prevents direct root login
 ### Firewall
 
 firewalld was configured and validated on the managed RHEL servers.
+
 The firewall configuration was managed through Ansible and verified to be active.
+
 The project allows the services required for administration and web-server operation, including SSH and HTTP.
+
 ```text
 ansible web -b -m command -a 'firewall-cmd --list-services'
 ```
+
 ![Firewall](docs/screenshots/08-firewall-validation.png)
 
 The firewall status was also checked as part of the automated health-check process.
