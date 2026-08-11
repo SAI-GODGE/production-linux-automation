@@ -249,3 +249,12 @@ The service returned:
 ```text
 active
 ```
+The deployed web application was tested using:
+```text
+ansible web03 -b -m shell -a 'curl -s http://localhost/'
+```
+The application successfully returned the Apache web page displaying the hostname and showing that the server is managed by Ansible.
+
+#### web03
+
+![Apache Web Server - web03](docs/screenshots/18-web03-apache.png)
