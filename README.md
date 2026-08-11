@@ -65,6 +65,5 @@ Overall, this project helped me practice Linux administration, Ansible automatio
 | Networking | VPC, Subnet, Internet Gateway, Route Table |
 | Monitoring & Health Checks | Ansible-based health checks and fleet health reports |
 | Version Control | Git, GitHub |
-| Documentation | Markdown |
 
 
